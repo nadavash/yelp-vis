@@ -1,0 +1,29 @@
+{
+  "name": "yelp-vis",
+  "version": "1.0.0",
+  "description": "Yelp data visualization.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nadavash/yelp-vis.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nadavash/yelp-vis/issues"
+  },
+  "homepage": "https://github.com/nadavash/yelp-vis#readme",
+  "dependencies": {
+    "angular": "^1.5.5",
+    "angular-animate": "^1.5.5",
+    "angular-aria": "^1.5.5",
+    "angular-material": "^1.0.8",
+    "angular-messages": "^1.5.5",
+    "angular-mocks": "^1.5.5",
+    "angular-route": "^1.5.5",
+    "angular-sanitize": "^1.5.5"
+  }
+}
