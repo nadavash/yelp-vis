@@ -20,13 +20,16 @@
     "angular": "^1.5.5",
     "angular-animate": "^1.5.5",
     "angular-aria": "^1.5.5",
+    "angular-google-maps": "^2.3.3",
     "angular-material": "^1.0.8",
     "angular-messages": "^1.5.5",
     "angular-mocks": "^1.5.5",
     "angular-route": "^1.5.5",
     "angular-sanitize": "^1.5.5",
+    "angular-simple-logger": "^0.1.7",
     "d3": "^3.5.17",
     "d3-geomap": "^1.0.1",
-    "d3-queue": "^2.0.3"
+    "d3-queue": "^2.0.3",
+    "lodash": "^4.12.0"
   }
 }

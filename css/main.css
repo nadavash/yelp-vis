@@ -10,3 +10,7 @@ md-toolbar h3 {
     margin: auto;
     font-weight: 500;
 }
+
+.angular-google-map-container {
+    height: 600px;
+}
