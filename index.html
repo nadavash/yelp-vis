@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Yelp Data Vis</title>
+
+        <meta charset="utf-8">
+
+        <link rel="stylesheet"" href="http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic">
+        <link rel="stylesheet" href="../node_modules/angular-material/angular-material.css">
+
+        <link rel="stylesheet" href="css/main.css">
+    </head>
+    <body ng-app="yelpVis" ng-controller="MainController as mc" layout="column">
+        <md-toolbar class="title-bar" layout="row">
+            <h3>Yelp Data Visualization</h3>
+        </md-toolbar>
+
+        <div flex layout="row">
+            <md-content flex id="content">
+
+            </md-content>
+        </div>
+
+        <!-- Include these modules at the end of the body tag to defer loading them until
+             the rest of the page loads -->
+
+        <!-- Include Angular modules -->
+        <script src="../node_modules/angular/angular.js"></script>
+        <script src="../node_modules/angular-animate/angular-animate.js"></script>
+        <script src="../node_modules/angular-aria/angular-aria.js"></script>
+        <script type="text/javascript" src="../node_modules/angular-material/angular-material.js"></script>
+
+        <!-- Include d3 -->
+        <script type="text/javascript" src="../node_modules/d3/d3.js"></script>
+
+        <!-- Custom modules -->
+        <script type="text/javascript" src="javascript/app.js"></script>
+    </body>
+</html>
