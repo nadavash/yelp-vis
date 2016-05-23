@@ -12,5 +12,9 @@ md-toolbar h3 {
 }
 
 .angular-google-map-container {
-    height: 600px;
+    height: 800px;
+}
+
+md-toolbar {
+    box-shadow: 0px 2px 3px #666666;
 }

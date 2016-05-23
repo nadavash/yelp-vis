@@ -14,8 +14,8 @@ var app = angular.module('yelpVis', ['ngMaterial', 'uiGmapgoogle-maps'])
 // The main controller for the application.
 app.controller('MainController', function($scope, uiGmapGoogleMapApi) {
     $scope.map = {
-        center: { latitude: 37.76487, longitude: -122.41948 },
-        zoom: 8,
+        center: { latitude: 36.1699, longitude: -115.1398 },
+        zoom: 12,
         control: {}
     };
 
@@ -23,43 +23,51 @@ app.controller('MainController', function($scope, uiGmapGoogleMapApi) {
 
         // Create the map overlay for layering custom SVG elements on top of the
         // map.
-        d3.json('data/stations.json', function(err, data) {
+        d3.json('/data/checkins.json', function(err, data) {
             if (err) throw err;
+
+            var logScale = d3.scale.log()
+                .base(Math.E)
+                .domain([Math.exp(0), Math.exp(50)])
+                .range([4, 10]);
 
             var overlay = new maps.OverlayView();
             overlay.onAdd = function() {
                 var layer = d3.select(this.getPanes().overlayLayer)
                     .append('div')
                     .attr('class', 'stations');
-
                 overlay.draw = function() {
                     var projection = this.getProjection();
-                    var padding = 10;
 
                     var marker = layer.selectAll('svg')
-                        .data(d3.entries(data))
+                        .data(data['18-6'].splice(0, 500))
                         .each(transform)
                         .enter().append('svg')
                         .each(transform)
-                        .attr('class', 'marker');
+                        .attr('class', 'marker')
+                        .style('width', function(d) { logScale(d) * 2; })
+                        .style('height', function(d) { logScale(d) * 2; });
 
                     marker.append('circle')
-                        .attr('r', 4.5)
-                        .attr('cx', padding)
-                        .attr('cy', padding);
+                        .attr('r', function(d) { return logScale(Math.exp(d)); })
+                        .attr('cx', function(d) { return logScale(Math.exp(d)); })
+                        .attr('cy', function(d) { return logScale(Math.exp(d)); });
 
-                    marker.append('text')
-                        .attr('x', padding + 7)
-                        .attr('y', padding)
-                        .attr('dy', '.31em')
-                        .text(function(d) { return d.key; });
+                    // marker.append('text')
+                    //     .attr('x', padding + 7)
+                    //     .attr('y', padding)
+                    //     .attr('dy', '.31em')
+                    //     .text(function(d) { return d.key; });
 
-                    function transform(d) {
-                        d = new maps.LatLng(d.value[1], d.value[0]);
-                        d = projection.fromLatLngToDivPixel(d);
+                    function transform(d, index) {
+                        d = logScale(Math.exp(d));
+                        geoloc = new maps.LatLng(
+                            data.businesses[index].latitude,
+                            data.businesses[index].longitude);
+                        screenPos = projection.fromLatLngToDivPixel(geoloc);
                         return d3.select(this)
-                            .style('left', (d.x - padding) + 'px')
-                            .style('top', (d.y - padding) + 'px');
+                            .style('left', (screenPos.x - d) + 'px')
+                            .style('top', (screenPos.y - d) + 'px');
                     }
                 };
             };
