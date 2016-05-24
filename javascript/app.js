@@ -30,6 +30,7 @@ app.controller('MainController', function($scope, uiGmapGoogleMapApi) {
                 .base(Math.E)
                 .domain([Math.exp(0), Math.exp(100)])
                 .range([0, 10]);
+            var time = '18-6';
 
             var overlay = new maps.OverlayView();
             overlay.onAdd = function() {
@@ -72,12 +73,17 @@ app.controller('MainController', function($scope, uiGmapGoogleMapApi) {
                             + viewBox.width + ' ' + viewBox.height);
 
                     var marker = layer.selectAll('circle')
-                        .data(data['18-6'].splice(0, 2000))
-                        .each(transform)
-                        .enter().append('circle')
+                        .data(data[time].slice(0, 2000));
+
+                    marker.enter().append('circle')
                         .each(transform)
                         .attr('class', 'marker')
-                        .attr('r', function(d) { return logScale(Math.exp(d)); })
+                        .attr('r', 0);
+
+                    marker.transition()
+                        .delay(function(d, i) { return i / 2; })
+                        .duration(2000)
+                        .attr('r', function(d) { return logScale(Math.exp(d)); });
 
                     function transform(d, index) {
                         d = logScale(Math.exp(d));
@@ -92,6 +98,11 @@ app.controller('MainController', function($scope, uiGmapGoogleMapApi) {
                 };
 
                 map.addListener('center_changed', overlay.draw);
+                setTimeout(function() {
+                    console.log('here');
+                    time = '12-3';
+                    overlay.draw();
+                }, 10000)
             };
             overlay.setMap($scope.map.control.getGMap());
         });

@@ -13,5 +13,5 @@ ui-gmap-google-map {
 
 .stations circle {
   fill: #c41200;
-  opacity: 0.8;
+  opacity: 0.5;
 }
