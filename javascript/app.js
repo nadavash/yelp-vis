@@ -28,36 +28,56 @@ app.controller('MainController', function($scope, uiGmapGoogleMapApi) {
 
             var logScale = d3.scale.log()
                 .base(Math.E)
-                .domain([Math.exp(0), Math.exp(50)])
-                .range([4, 10]);
+                .domain([Math.exp(0), Math.exp(100)])
+                .range([0, 10]);
 
             var overlay = new maps.OverlayView();
             overlay.onAdd = function() {
-                var layer = d3.select(this.getPanes().overlayLayer)
-                    .append('div')
-                    .attr('class', 'stations');
-                overlay.draw = function() {
-                    var projection = this.getProjection();
+                var map = $scope.map.control.getGMap();
 
-                    var marker = layer.selectAll('svg')
-                        .data(data['18-6'].splice(0, 500))
+                var layer = d3.select(this.getPanes().overlayLayer)
+                    .append('svg')
+                    .attr('class', 'stations');
+
+                var originalBounds = map.getBounds();
+                var origZoom = $scope.map.zoom;
+
+                overlay.draw = function() {
+                    var projection = overlay.getProjection();
+
+                    var sw = projection.fromLatLngToDivPixel(
+                        map.getBounds().getSouthWest());
+                    var ne = projection.fromLatLngToDivPixel(
+                        map.getBounds().getNorthEast());
+
+                    var origSw = projection.fromLatLngToDivPixel(
+                        originalBounds.getSouthWest());
+                    var origNe = projection.fromLatLngToDivPixel(
+                        originalBounds.getNorthEast());
+
+                    var currZoom = origZoom - map.getZoom();
+                    var zoomFactor = Math.pow(2, currZoom);
+                    var viewBox = {
+                        x: (sw.x - origSw.x) * zoomFactor,
+                        y: (ne.y - origNe.y) * zoomFactor,
+                        width: (ne.x - sw.x) * zoomFactor,
+                        height: (sw.y - ne.y) * zoomFactor
+                    };
+
+                    layer.style('left', sw.x + 'px')
+                        .style('top', ne.y + 'px')
+                        .style('width', (ne.x - sw.x) + 'px')
+                        .style('height', (sw.y - ne.y) + 'px')
+                        .attr('viewBox', viewBox.x + ' ' + viewBox.y + ' '
+                            + viewBox.width + ' ' + viewBox.height);
+
+                    var marker = layer.selectAll('circle')
+                        .data(data['18-6'].splice(0, 2000))
                         .each(transform)
-                        .enter().append('svg')
+                        .enter().append('circle')
                         .each(transform)
                         .attr('class', 'marker')
-                        .style('width', function(d) { logScale(d) * 2; })
-                        .style('height', function(d) { logScale(d) * 2; });
-
-                    marker.append('circle')
                         .attr('r', function(d) { return logScale(Math.exp(d)); })
-                        .attr('cx', function(d) { return logScale(Math.exp(d)); })
-                        .attr('cy', function(d) { return logScale(Math.exp(d)); });
-
-                    // marker.append('text')
-                    //     .attr('x', padding + 7)
-                    //     .attr('y', padding)
-                    //     .attr('dy', '.31em')
-                    //     .text(function(d) { return d.key; });
 
                     function transform(d, index) {
                         d = logScale(Math.exp(d));
@@ -66,10 +86,12 @@ app.controller('MainController', function($scope, uiGmapGoogleMapApi) {
                             data.businesses[index].longitude);
                         screenPos = projection.fromLatLngToDivPixel(geoloc);
                         return d3.select(this)
-                            .style('left', (screenPos.x - d) + 'px')
-                            .style('top', (screenPos.y - d) + 'px');
+                            .attr('cx', screenPos.x + 'px')
+                            .attr('cy', screenPos.y + 'px');
                     }
                 };
+
+                map.addListener('center_changed', overlay.draw);
             };
             overlay.setMap($scope.map.control.getGMap());
         });

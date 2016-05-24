@@ -5,12 +5,13 @@ ui-gmap-google-map {
     padding: 0;
 }
 
-.stations, .stations svg {
+.stations {
   position: absolute;
+  width: 1000px;
+  height: 1000px;
 }
 
 .stations circle {
-  fill: brown;
-  stroke-width: 1.5px;
+  fill: #c41200;
   opacity: 0.8;
 }
