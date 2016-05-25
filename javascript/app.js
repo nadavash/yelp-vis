@@ -13,98 +13,112 @@ var app = angular.module('yelpVis', ['ngMaterial', 'uiGmapgoogle-maps'])
 
 // The main controller for the application.
 app.controller('MainController', function($scope, uiGmapGoogleMapApi) {
+    // Share google maps api for directives in this controller.
+    $scope.uiGmapGoogleMapApi = uiGmapGoogleMapApi;
+
     $scope.map = {
         center: { latitude: 36.1699, longitude: -115.1398 },
         zoom: 12,
         control: {}
     };
 
-    uiGmapGoogleMapApi.then(function(maps) {
+});
 
-        // Create the map overlay for layering custom SVG elements on top of the
-        // map.
-        d3.json('/data/checkins.json', function(err, data) {
-            if (err) throw err;
+app.directive('yelpVisOverlay', function() {
+    return {
+        scope: false,
+        link: function(scope, elem) {
+            // TODO(nadavash): factor out d3 visulization and fix up this
+            // directive to listen to data-changes events.
 
-            var logScale = d3.scale.log()
-                .base(Math.E)
-                .domain([Math.exp(0), Math.exp(100)])
-                .range([0, 10]);
-            var time = '18-6';
+            // Initialized overlay when the API is finished loading.
+            scope.uiGmapGoogleMapApi.then(function(maps) {
+                // Create the map overlay for layering custom SVG elements on top of the
+                // map.
+                d3.json('/data/checkins.json', function(err, data) {
+                    if (err) throw err;
 
-            var overlay = new maps.OverlayView();
-            overlay.onAdd = function() {
-                var map = $scope.map.control.getGMap();
+                    var logScale = d3.scale.log()
+                        .base(Math.E)
+                        .domain([Math.exp(0), Math.exp(100)])
+                        .range([0, 10]);
+                    var time = '18-6';
 
-                var layer = d3.select(this.getPanes().overlayLayer)
-                    .append('svg')
-                    .attr('class', 'stations');
+                    var overlay = new maps.OverlayView();
+                    overlay.onAdd = function() {
+                        var map = scope.map.control.getGMap();
 
-                var originalBounds = map.getBounds();
-                var origZoom = $scope.map.zoom;
+                        var layer = d3.select(this.getPanes().overlayLayer)
+                            .append('svg')
+                            .attr('class', 'stations');
 
-                overlay.draw = function() {
-                    var projection = overlay.getProjection();
+                        var originalBounds = map.getBounds();
+                        var origZoom = scope.map.zoom;
 
-                    var sw = projection.fromLatLngToDivPixel(
-                        map.getBounds().getSouthWest());
-                    var ne = projection.fromLatLngToDivPixel(
-                        map.getBounds().getNorthEast());
+                        overlay.draw = function() {
+                            var projection = overlay.getProjection();
 
-                    var origSw = projection.fromLatLngToDivPixel(
-                        originalBounds.getSouthWest());
-                    var origNe = projection.fromLatLngToDivPixel(
-                        originalBounds.getNorthEast());
+                            var sw = projection.fromLatLngToDivPixel(
+                                map.getBounds().getSouthWest());
+                            var ne = projection.fromLatLngToDivPixel(
+                                map.getBounds().getNorthEast());
 
-                    var currZoom = origZoom - map.getZoom();
-                    var zoomFactor = Math.pow(2, currZoom);
-                    var viewBox = {
-                        x: (sw.x - origSw.x) * zoomFactor,
-                        y: (ne.y - origNe.y) * zoomFactor,
-                        width: (ne.x - sw.x) * zoomFactor,
-                        height: (sw.y - ne.y) * zoomFactor
+                            var origSw = projection.fromLatLngToDivPixel(
+                                originalBounds.getSouthWest());
+                            var origNe = projection.fromLatLngToDivPixel(
+                                originalBounds.getNorthEast());
+
+                            var currZoom = origZoom - map.getZoom();
+                            var zoomFactor = Math.pow(2, currZoom);
+                            var viewBox = {
+                                x: (sw.x - origSw.x) * zoomFactor,
+                                y: (ne.y - origNe.y) * zoomFactor,
+                                width: (ne.x - sw.x) * zoomFactor,
+                                height: (sw.y - ne.y) * zoomFactor
+                            };
+
+                            layer.style('left', sw.x + 'px')
+                                .style('top', ne.y + 'px')
+                                .style('width', (ne.x - sw.x) + 'px')
+                                .style('height', (sw.y - ne.y) + 'px')
+                                .attr('viewBox', viewBox.x + ' ' + viewBox.y + ' '
+                                    + viewBox.width + ' ' + viewBox.height);
+
+                            var marker = layer.selectAll('circle')
+                                .data(data[time].slice(0, 2000));
+
+                            marker.enter().append('circle')
+                                .each(transform)
+                                .attr('class', 'marker')
+                                .attr('r', 0);
+
+                            marker.transition()
+                                .delay(function(d, i) { return i / 2; })
+                                .duration(2000)
+                                .attr('r', function(d) { return logScale(Math.exp(d)); });
+
+                            function transform(d, index) {
+                                d = logScale(Math.exp(d));
+                                geoloc = new maps.LatLng(
+                                    data.businesses[index].latitude,
+                                    data.businesses[index].longitude);
+                                screenPos = projection.fromLatLngToDivPixel(geoloc);
+                                return d3.select(this)
+                                    .attr('cx', screenPos.x + 'px')
+                                    .attr('cy', screenPos.y + 'px');
+                            }
+                        };
+
+                        map.addListener('center_changed', overlay.draw);
+                        setTimeout(function() {
+                            console.log('here');
+                            time = '12-3';
+                            overlay.draw();
+                        }, 10000)
                     };
-
-                    layer.style('left', sw.x + 'px')
-                        .style('top', ne.y + 'px')
-                        .style('width', (ne.x - sw.x) + 'px')
-                        .style('height', (sw.y - ne.y) + 'px')
-                        .attr('viewBox', viewBox.x + ' ' + viewBox.y + ' '
-                            + viewBox.width + ' ' + viewBox.height);
-
-                    var marker = layer.selectAll('circle')
-                        .data(data[time].slice(0, 2000));
-
-                    marker.enter().append('circle')
-                        .each(transform)
-                        .attr('class', 'marker')
-                        .attr('r', 0);
-
-                    marker.transition()
-                        .delay(function(d, i) { return i / 2; })
-                        .duration(2000)
-                        .attr('r', function(d) { return logScale(Math.exp(d)); });
-
-                    function transform(d, index) {
-                        d = logScale(Math.exp(d));
-                        geoloc = new maps.LatLng(
-                            data.businesses[index].latitude,
-                            data.businesses[index].longitude);
-                        screenPos = projection.fromLatLngToDivPixel(geoloc);
-                        return d3.select(this)
-                            .attr('cx', screenPos.x + 'px')
-                            .attr('cy', screenPos.y + 'px');
-                    }
-                };
-
-                map.addListener('center_changed', overlay.draw);
-                setTimeout(function() {
-                    console.log('here');
-                    time = '12-3';
-                    overlay.draw();
-                }, 10000)
-            };
-            overlay.setMap($scope.map.control.getGMap());
-        });
-    });
+                    overlay.setMap(scope.map.control.getGMap());
+                });
+            });
+        }
+    };
 });
