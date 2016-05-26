@@ -28,95 +28,105 @@ app.directive('yelpVisOverlay', function() {
     return {
         scope: false,
         link: function(scope, elem) {
-            // TODO(nadavash): factor out d3 visulization and fix up this
-            // directive to listen to data-changes events.
+            var map = null;
+            var originalBounds = null;
+            var originalZoom = null;
+            var dataBound = false;
+
+            // TODO(nadavash): listen for data changes on the scope to change
+            // bubble map visualization.
 
             // Initialized overlay when the API is finished loading.
             scope.uiGmapGoogleMapApi.then(function(maps) {
+                // Set the map reference for this directive.
+
                 // Create the map overlay for layering custom SVG elements on top of the
                 // map.
                 d3.json('/data/checkins.json', function(err, data) {
                     if (err) throw err;
 
-                    var logScale = d3.scale.log()
-                        .base(Math.E)
-                        .domain([Math.exp(0), Math.exp(100)])
-                        .range([0, 10]);
-                    var time = '18-6';
+                    map = scope.map.control.getGMap();
+
+
+                    var checkinsMap = new bubbleMap()
+                        .minBubbleRadius(0)
+                        .maxBubbleRadius(50)
+                        .transitionDuration(2000);
 
                     var overlay = new maps.OverlayView();
                     overlay.onAdd = function() {
-                        var map = scope.map.control.getGMap();
+                        originalBounds = map.getBounds();
+                        originalZoom = map.getZoom();
+                    }
 
-                        var layer = d3.select(this.getPanes().overlayLayer)
-                            .append('svg')
-                            .attr('class', 'stations');
+                    overlay.draw = function() {
+                        var projection = overlay.getProjection();
 
-                        var originalBounds = map.getBounds();
-                        var origZoom = scope.map.zoom;
+                        var sw = projection.fromLatLngToDivPixel(
+                            map.getBounds().getSouthWest());
+                        var ne = projection.fromLatLngToDivPixel(
+                            map.getBounds().getNorthEast());
 
-                        overlay.draw = function() {
-                            var projection = overlay.getProjection();
+                        var origSw = projection.fromLatLngToDivPixel(
+                            originalBounds.getSouthWest());
+                        var origNe = projection.fromLatLngToDivPixel(
+                            originalBounds.getNorthEast());
 
-                            var sw = projection.fromLatLngToDivPixel(
-                                map.getBounds().getSouthWest());
-                            var ne = projection.fromLatLngToDivPixel(
-                                map.getBounds().getNorthEast());
 
-                            var origSw = projection.fromLatLngToDivPixel(
-                                originalBounds.getSouthWest());
-                            var origNe = projection.fromLatLngToDivPixel(
-                                originalBounds.getNorthEast());
+                        checkinsMap.width(ne.x - sw.x)
+                            .height(sw.y - ne.y);
 
-                            var currZoom = origZoom - map.getZoom();
-                            var zoomFactor = Math.pow(2, currZoom);
-                            var viewBox = {
-                                x: (sw.x - origSw.x) * zoomFactor,
-                                y: (ne.y - origNe.y) * zoomFactor,
-                                width: (ne.x - sw.x) * zoomFactor,
-                                height: (sw.y - ne.y) * zoomFactor
+                        if (!dataBound) {
+                            var datum = {
+                                projection: projection,
+                                // locations: data.businesses,
+                                // sizes: data['18-6'].slice(0,5000),
+                                maps: maps
                             };
 
-                            layer.style('left', sw.x + 'px')
-                                .style('top', ne.y + 'px')
-                                .style('width', (ne.x - sw.x) + 'px')
-                                .style('height', (sw.y - ne.y) + 'px')
-                                .attr('viewBox', viewBox.x + ' ' + viewBox.y + ' '
-                                    + viewBox.width + ' ' + viewBox.height);
+                            var locations = [];
+                            var sizes = data['18-6'].filter(function(val, i) {
+                                if (val > 0) {
+                                    locations.push(data.businesses[i]);
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            });
+                            datum.locations = locations;
+                            datum.sizes = sizes;
 
-                            var marker = layer.selectAll('circle')
-                                .data(data[time].slice(0, 2000));
+                            d3.select(overlay.getPanes().overlayLayer)
+                                .datum(datum)
+                                .call(checkinsMap);
 
-                            marker.enter().append('circle')
-                                .each(transform)
-                                .attr('class', 'marker')
-                                .attr('r', 0);
+                            dataBound = true;
+                        }
 
-                            marker.transition()
-                                .delay(function(d, i) { return i / 2; })
-                                .duration(2000)
-                                .attr('r', function(d) { return logScale(Math.exp(d)); });
+                        var svgLayer = d3.select(overlay.getPanes().overlayLayer)
+                            .select('svg');
 
-                            function transform(d, index) {
-                                d = logScale(Math.exp(d));
-                                geoloc = new maps.LatLng(
-                                    data.businesses[index].latitude,
-                                    data.businesses[index].longitude);
-                                screenPos = projection.fromLatLngToDivPixel(geoloc);
-                                return d3.select(this)
-                                    .attr('cx', screenPos.x + 'px')
-                                    .attr('cy', screenPos.y + 'px');
-                            }
+
+                        var currZoom = originalZoom - map.getZoom();
+                        var zoomFactor = Math.pow(2, currZoom);
+                        var viewBox = {
+                            x: (sw.x - origSw.x) * zoomFactor,
+                            y: (ne.y - origNe.y) * zoomFactor,
+                            width: (ne.x - sw.x) * zoomFactor,
+                            height: (sw.y - ne.y) * zoomFactor
                         };
 
-                        map.addListener('center_changed', overlay.draw);
-                        setTimeout(function() {
-                            console.log('here');
-                            time = '12-3';
-                            overlay.draw();
-                        }, 10000)
+                        svgLayer.style('left', sw.x + 'px')
+                            .style('top', ne.y + 'px')
+                            .style('width', (ne.x - sw.x) + 'px')
+                            .style('height', (sw.y - ne.y) + 'px')
+                            .attr('viewBox', viewBox.x + ' ' + viewBox.y + ' '
+                                + viewBox.width + ' ' + viewBox.height);
                     };
+
                     overlay.setMap(scope.map.control.getGMap());
+
+                    map.addListener('bounds_changed', overlay.draw);
                 });
             });
         }

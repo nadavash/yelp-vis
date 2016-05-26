@@ -5,13 +5,12 @@ ui-gmap-google-map {
     padding: 0;
 }
 
-.stations {
+.bubble-map {
   position: absolute;
   width: 1000px;
   height: 1000px;
 }
 
-.stations circle {
-  fill: #c41200;
+.bubble-map circle {
   opacity: 0.5;
 }
