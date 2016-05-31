@@ -12,16 +12,15 @@ var app = angular.module('yelpVis', ['ngMaterial', 'uiGmapgoogle-maps'])
     });
 
 // The main controller for the application.
-app.controller('MainController', function($scope, uiGmapGoogleMapApi) {
+app.controller('MainController', function($scope, $window, uiGmapIsReady) {
     // Share google maps api for directives in this controller.
-    $scope.uiGmapGoogleMapApi = uiGmapGoogleMapApi;
+    $scope.uiGmapIsReady = uiGmapIsReady;
 
     $scope.map = {
         center: { latitude: 36.1699, longitude: -115.1398 },
         zoom: 12,
         control: {}
     };
-
 });
 
 app.directive('yelpVisOverlay', function() {
@@ -37,7 +36,7 @@ app.directive('yelpVisOverlay', function() {
             // bubble map visualization.
 
             // Initialized overlay when the API is finished loading.
-            scope.uiGmapGoogleMapApi.then(function(maps) {
+            scope.uiGmapIsReady.promise(1).then(function(instances) {
                 // Set the map reference for this directive.
 
                 // Create the map overlay for layering custom SVG elements on top of the
@@ -45,15 +44,14 @@ app.directive('yelpVisOverlay', function() {
                 d3.json('/data/checkins.json', function(err, data) {
                     if (err) throw err;
 
-                    map = scope.map.control.getGMap();
-
+                    map = instances[0].map;
 
                     var checkinsMap = new bubbleMap()
                         .minBubbleRadius(0)
                         .maxBubbleRadius(50)
                         .transitionDuration(2000);
 
-                    var overlay = new maps.OverlayView();
+                    var overlay = new google.maps.OverlayView();
                     overlay.onAdd = function() {
                         originalBounds = map.getBounds();
                         originalZoom = map.getZoom();
@@ -91,7 +89,7 @@ app.directive('yelpVisOverlay', function() {
                                 projection: projection,
                                 locations: locations,
                                 sizes: sizes,
-                                maps: maps
+                                maps: google.maps
                             };
 
                             d3.select(overlay.getPanes().overlayLayer)
