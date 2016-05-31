@@ -77,13 +77,6 @@ app.directive('yelpVisOverlay', function() {
                             .height(sw.y - ne.y);
 
                         if (!dataBound) {
-                            var datum = {
-                                projection: projection,
-                                // locations: data.businesses,
-                                // sizes: data['18-6'].slice(0,5000),
-                                maps: maps
-                            };
-
                             var locations = [];
                             var sizes = data['18-6'].filter(function(val, i) {
                                 if (val > 0) {
@@ -93,8 +86,13 @@ app.directive('yelpVisOverlay', function() {
                                     return false;
                                 }
                             });
-                            datum.locations = locations;
-                            datum.sizes = sizes;
+
+                            var datum = {
+                                projection: projection,
+                                locations: locations,
+                                sizes: sizes,
+                                maps: maps
+                            };
 
                             d3.select(overlay.getPanes().overlayLayer)
                                 .datum(datum)
