@@ -4,7 +4,7 @@ var app = angular.module('yelpVis', ['ngMaterial', 'uiGmapgoogle-maps'])
     .config(function($mdThemingProvider, uiGmapGoogleMapApiProvider) {
         $mdThemingProvider.theme('default')
             .primaryPalette('red')
-            .accentPalette('grey');
+            .accentPalette('blue');
 
         uiGmapGoogleMapApiProvider.configure({
             libraries: 'geometry,visualization'
@@ -12,7 +12,10 @@ var app = angular.module('yelpVis', ['ngMaterial', 'uiGmapgoogle-maps'])
     });
 
 // The main controller for the application.
-app.controller('MainController', function($scope, $window, uiGmapIsReady) {
+app.controller('MainController', function($scope,
+                                          $window,
+                                          $http,
+                                          uiGmapIsReady) {
     // Share google maps api for directives in this controller.
     $scope.uiGmapIsReady = uiGmapIsReady;
 
@@ -21,6 +24,60 @@ app.controller('MainController', function($scope, $window, uiGmapIsReady) {
         zoom: 12,
         control: {}
     };
+
+    // Map visualization controls
+    $scope.days = [
+        'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
+        'Saturday'
+    ];
+    $scope.selectedDay = null;// 6;
+
+    $scope.hours = d3.range(24);
+    $scope.selectedHour = null;// 11;
+
+    $scope.checkinData = null;
+
+    // Private variables
+    var checkinData = null;
+
+    d3.json('/data/checkins.json', function(err, data) {
+        if (err) {
+            throw err;
+        }
+
+        checkinData = data;
+    });
+
+    // Watch for change in date to change the data we expose to the map
+    // visualization directive.
+    $scope.$watchGroup(['selectedDay', 'selectedHour'],
+        function() {
+            if ($scope.selectedDay === null || $scope.selectedHour === null) {
+                return;
+            }
+
+            var locations = [];
+            var sizes = checkinData[$scope.selectedHour + '-' + $scope.selectedDay]
+                .filter(function(val, i) {
+                    if (val > 0) {
+                        locations.push(checkinData.businesses[i]);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                });
+            sizes = sizes.map(function(value, index) {
+                return {
+                    size: value,
+                    business_id: locations[index].business_id
+                };
+            });
+
+            $scope.checkinData = {
+                locations: locations,
+                sizes: sizes
+            };
+        });
 });
 
 app.directive('yelpVisOverlay', function() {
@@ -30,7 +87,12 @@ app.directive('yelpVisOverlay', function() {
             var map = null;
             var originalBounds = null;
             var originalZoom = null;
-            var dataBound = false;
+            var overlay = null;
+
+            var checkinsMap = new bubbleMap()
+                .minBubbleRadius(1.5)
+                .maxBubbleRadius(25)
+                .transitionDuration(2000);
 
             // TODO(nadavash): listen for data changes on the scope to change
             // bubble map visualization.
@@ -41,90 +103,75 @@ app.directive('yelpVisOverlay', function() {
 
                 // Create the map overlay for layering custom SVG elements on top of the
                 // map.
-                d3.json('/data/checkins.json', function(err, data) {
-                    if (err) throw err;
+                map = instances[0].map;
 
-                    map = instances[0].map;
+                overlay = new google.maps.OverlayView();
+                overlay.onAdd = function() {
+                    originalBounds = map.getBounds();
+                    originalZoom = map.getZoom();
+                }
 
-                    var checkinsMap = new bubbleMap()
-                        .minBubbleRadius(0)
-                        .maxBubbleRadius(50)
-                        .transitionDuration(2000);
+                overlay.draw = function() {
+                    var projection = overlay.getProjection();
 
-                    var overlay = new google.maps.OverlayView();
-                    overlay.onAdd = function() {
-                        originalBounds = map.getBounds();
-                        originalZoom = map.getZoom();
-                    }
+                    var sw = projection.fromLatLngToDivPixel(
+                        map.getBounds().getSouthWest());
+                    var ne = projection.fromLatLngToDivPixel(
+                        map.getBounds().getNorthEast());
 
-                    overlay.draw = function() {
-                        var projection = overlay.getProjection();
-
-                        var sw = projection.fromLatLngToDivPixel(
-                            map.getBounds().getSouthWest());
-                        var ne = projection.fromLatLngToDivPixel(
-                            map.getBounds().getNorthEast());
-
-                        var origSw = projection.fromLatLngToDivPixel(
-                            originalBounds.getSouthWest());
-                        var origNe = projection.fromLatLngToDivPixel(
-                            originalBounds.getNorthEast());
+                    var origSw = projection.fromLatLngToDivPixel(
+                        originalBounds.getSouthWest());
+                    var origNe = projection.fromLatLngToDivPixel(
+                        originalBounds.getNorthEast());
 
 
-                        checkinsMap.width(ne.x - sw.x)
-                            .height(sw.y - ne.y);
+                    checkinsMap.width(ne.x - sw.x)
+                        .height(sw.y - ne.y);
 
-                        if (!dataBound) {
-                            var locations = [];
-                            var sizes = data['18-6'].filter(function(val, i) {
-                                if (val > 0) {
-                                    locations.push(data.businesses[i]);
-                                    return true;
-                                } else {
-                                    return false;
-                                }
-                            });
-
-                            var datum = {
-                                projection: projection,
-                                locations: locations,
-                                sizes: sizes,
-                                maps: google.maps
-                            };
-
-                            d3.select(overlay.getPanes().overlayLayer)
-                                .datum(datum)
-                                .call(checkinsMap);
-
-                            dataBound = true;
-                        }
-
-                        var svgLayer = d3.select(overlay.getPanes().overlayLayer)
-                            .select('svg');
+                    var svgLayer = d3.select(overlay.getPanes().overlayLayer)
+                        .select('svg');
 
 
-                        var currZoom = originalZoom - map.getZoom();
-                        var zoomFactor = Math.pow(2, currZoom);
-                        var viewBox = {
-                            x: (sw.x - origSw.x) * zoomFactor,
-                            y: (ne.y - origNe.y) * zoomFactor,
-                            width: (ne.x - sw.x) * zoomFactor,
-                            height: (sw.y - ne.y) * zoomFactor
-                        };
-
-                        svgLayer.style('left', sw.x + 'px')
-                            .style('top', ne.y + 'px')
-                            .style('width', (ne.x - sw.x) + 'px')
-                            .style('height', (sw.y - ne.y) + 'px')
-                            .attr('viewBox', viewBox.x + ' ' + viewBox.y + ' '
-                                + viewBox.width + ' ' + viewBox.height);
+                    var currZoom = originalZoom - map.getZoom();
+                    var zoomFactor = Math.pow(2, currZoom);
+                    var viewBox = {
+                        x: (sw.x - origSw.x) * zoomFactor,
+                        y: (ne.y - origNe.y) * zoomFactor,
+                        width: (ne.x - sw.x) * zoomFactor,
+                        height: (sw.y - ne.y) * zoomFactor
                     };
 
-                    overlay.setMap(scope.map.control.getGMap());
+                    svgLayer.style('left', sw.x + 'px')
+                        .style('top', ne.y + 'px')
+                        .style('width', (ne.x - sw.x) + 'px')
+                        .style('height', (sw.y - ne.y) + 'px')
+                        .attr('viewBox', viewBox.x + ' ' + viewBox.y + ' '
+                            + viewBox.width + ' ' + viewBox.height);
+                };
 
-                    map.addListener('bounds_changed', overlay.draw);
-                });
+                overlay.setMap(scope.map.control.getGMap());
+
+                map.addListener('bounds_changed', overlay.draw);
             });
+
+            scope.$watch('checkinData', function(checkinData) {
+                if (checkinData === null) {
+                    return;
+                }
+
+                var datum = {
+                    projection: overlay.getProjection(),
+                    locations: checkinData.locations,
+                    sizes: checkinData.sizes,
+                    maps: google.maps
+                };
+
+                d3.select(overlay.getPanes().overlayLayer)
+                    .datum(datum)
+                    .call(checkinsMap);
+
+                overlay.draw();
+            }, true);
         }
     };
 });

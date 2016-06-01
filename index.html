@@ -24,6 +24,21 @@
                                     control="map.control">
                 </ui-gmap-google-map>
             </md-content>
+            <div class="toolbox" md-whiteframe="2">
+                <h1 class="md-title">Select day of week and time of day:</h1>
+                <div layout="row">
+                    <md-input-container>
+                        <md-select ng-model="selectedDay">
+                            <md-option ng-value="$index" ng-repeat="day in days">{{ day }}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container>
+                        <md-select ng-model="selectedHour">
+                            <md-option ng-value="$index" ng-repeat="hour in hours">{{ hour + ':00' }}</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+            </div>
         </div>
 
         <!-- Include these modules at the end of the body tag to defer loading them until

@@ -15,7 +15,10 @@ function bubbleMap() {
         selection.each(function(data) {
             // Prepare the scales
             var bubbleRadiusScale = d3.scale.linear()
-                .domain([d3.min(data.sizes), d3.max(data.sizes)])
+                .domain([
+                    d3.min(data.sizes, function(d) { return +d.size; }),
+                    d3.max(data.sizes, function(d) { return +d.size; })
+                ])
                 .range([minBubbleRadius, maxBubbleRadius])
 
             var svg = d3.select(this)
@@ -29,7 +32,15 @@ function bubbleMap() {
             svg.attr('width', width)
                 .attr('height', height);
 
-            var bubbles = svg.selectAll('circle').data(data.sizes);
+            var bubbles = svg.selectAll('circle')
+                .data(data.sizes, function(d) {
+                    return d.business_id;
+                });
+
+            bubbles.exit().transition()
+                .duration(transitionDuration)
+                .attr('r', 0)
+                .remove();
 
             bubbles.enter().append('circle')
                 .each(transform)
@@ -38,13 +49,11 @@ function bubbleMap() {
                 .attr('r', 0);
 
             bubbles.transition()
-                .delay(function(_, i) { return i; })
+                .delay(function(_, i) { return i * 1.5; })
                 .duration(transitionDuration)
-                .attr('r', function(d) { return bubbleRadiusScale(d); })
-
+                .attr('r', function(d) { return bubbleRadiusScale(d.size); })
 
             function transform(d, i) {
-                var bubbleRadius = bubbleRadiusScale(d);
                 var geoLocation = new data.maps.LatLng(
                     data.locations[i].latitude,
                     data.locations[i].longitude);
