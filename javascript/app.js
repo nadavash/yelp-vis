@@ -121,13 +121,11 @@ app.directive('yelpVisOverlay', function() {
                     var origNe = projection.fromLatLngToDivPixel(
                         originalBounds.getNorthEast());
 
-
                     checkinsMap.width(ne.x - sw.x)
                         .height(sw.y - ne.y);
 
                     var svgLayer = d3.select(overlay.getPanes().overlayLayer)
                         .select('svg');
-
 
                     var currZoom = originalZoom - map.getZoom();
                     var zoomFactor = Math.pow(2, currZoom);
@@ -155,6 +153,8 @@ app.directive('yelpVisOverlay', function() {
                 if (checkinData === null) {
                     return;
                 }
+
+                overlay.draw();
 
                 var datum = {
                     projection: overlay.getProjection(),
