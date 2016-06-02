@@ -94,9 +94,6 @@ app.directive('yelpVisOverlay', function() {
                 .maxBubbleRadius(25)
                 .transitionDuration(2000);
 
-            // TODO(nadavash): listen for data changes on the scope to change
-            // bubble map visualization.
-
             // Initialized overlay when the API is finished loading.
             scope.uiGmapIsReady.promise(1).then(function(instances) {
                 // Set the map reference for this directive.

@@ -25,7 +25,6 @@
                 </ui-gmap-google-map>
             </md-content>
             <div class="toolbox" md-whiteframe="2">
-                <h1 class="md-title">Select day of week and time of day:</h1>
                 <div layout="row">
                     <md-input-container>
                         <md-select ng-model="selectedDay">
@@ -34,7 +33,7 @@
                     </md-input-container>
                     <md-input-container>
                         <md-select ng-model="selectedHour">
-                            <md-option ng-value="$index" ng-repeat="hour in hours">{{ hour + ':00' }}</md-option>
+                            <md-option ng-value="$index" ng-repeat="hour in hours">{{ hour % 12 + ':00 ' + (hour < 12 ? 'AM' : 'PM') }}</md-option>
                         </md-select>
                     </md-input-container>
                 </div>

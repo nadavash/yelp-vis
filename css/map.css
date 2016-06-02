@@ -17,14 +17,3 @@
 .bubble-map circle {
   opacity: 0.5;
 }
-
-.toolbox {
-  position: absolute;
-  left: 10px;
-  bottom: 10px;
-  width: 500px;
-  height: 300px;
-  z-index: 100px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.9)
-}
