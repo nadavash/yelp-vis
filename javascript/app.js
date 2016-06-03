@@ -1,10 +1,15 @@
 /// <reference path="../typings/index.d.ts" />
+'use strict';
 
 var app = angular.module('yelpVis', ['ngMaterial', 'uiGmapgoogle-maps'])
-    .config(function($mdThemingProvider, uiGmapGoogleMapApiProvider) {
+    .config(function($mdThemingProvider,
+                     $mdIconProvider,
+                     uiGmapGoogleMapApiProvider) {
         $mdThemingProvider.theme('default')
             .primaryPalette('red')
             .accentPalette('blue');
+
+        $mdIconProvider.fontSet('md', 'material-icons');
 
         uiGmapGoogleMapApiProvider.configure({
             libraries: 'geometry,visualization'
@@ -22,7 +27,11 @@ app.controller('MainController', function($scope,
     $scope.map = {
         center: { latitude: 36.1699, longitude: -115.1398 },
         zoom: 12,
-        control: {}
+        control: {},
+        options: {
+            streetViewControl: false,
+            zoomControl: false
+        }
     };
 
     // Map visualization controls
@@ -92,7 +101,7 @@ app.directive('yelpVisOverlay', function() {
             var checkinsMap = new bubbleMap()
                 .minBubbleRadius(1.5)
                 .maxBubbleRadius(25)
-                .transitionDuration(2000);
+                .transitionDuration(500);
 
             // Initialized overlay when the API is finished loading.
             scope.uiGmapIsReady.promise(1).then(function(instances) {
@@ -110,6 +119,10 @@ app.directive('yelpVisOverlay', function() {
 
                 overlay.draw = function() {
                     var projection = overlay.getProjection();
+
+                    if (projection === undefined) {
+                        return;
+                    }
 
                     var sw = projection.fromLatLngToDivPixel(
                         map.getBounds().getSouthWest());

@@ -1,31 +1,30 @@
 html, body {
-  font-family: 'Roboto', sans-serif;
-  font-size: 14px;
-  width: 100%;
-  height: 100%;
-  margin: 0px;
-  padding: 0px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
 }
 
 md-toolbar h3 {
-    margin: auto;
     font-weight: 500;
 }
 
-md-toolbar {
+.title-bar {
     box-shadow: 0px 2px 3px #666666;
 }
 
+.time-toolbar {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    width: 500px;
+    height: 50px;
+}
 
-.toolbox {
-  position: absolute;
-  left: 10px;
-  bottom: 10px;
-  width: 100%;
-  height: 50px;
-  z-index: 100px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.9)
+.tutorial-container {
+    box-shadow: 3px 0px 3px #666666;
 }
 
 /*
@@ -34,5 +33,5 @@ md-toolbar {
   other selectors that are more specific or come later and might alter display.
  */
 [ng\:cloak], [ng-cloak], .ng-cloak {
-  display: none !important;
+    display: none !important;
 }

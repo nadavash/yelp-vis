@@ -7,38 +7,60 @@
 
         <link rel="stylesheet"" href="http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic">
         <link rel="stylesheet" href="../node_modules/angular-material/angular-material.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 
         <link rel="stylesheet" href="css/main.css">
         <link rel="stylesheet" href="css/map.css">
     </head>
     <body ng-app="yelpVis" ng-controller="MainController as mc" layout="column"  ng-cloak>
         <md-toolbar class="title-bar" layout="row">
-            <h3>Yelp Data Visualization</h3>
+            <div class="md-toolbar-tools">
+                <md-button aria-label="Toggle Tutorial">Start Tutorial</md-button>
+                <h2>Yelp Data Visualization</h2>
+            </div>
         </md-toolbar>
-
         <div flex layout="row">
+            <md-sidenav class="md-sidenav-left"
+                        md-component-id="left"
+                        md-is-locked-open="true"
+                        md-disable-backdrop
+                        md-whiteframe="4">
+                <md-toolbar class="md-theme-indigo">
+                    <h1 class="md-toolbar-tools">Tutorial</h1>
+                </md-toolbar>
+                <md-content layout-padding>
+                    <p>
+                    This sidenav is locked open on your device. To go back to the default behavior,
+                    narrow your display.
+                    </p>
+                </md-content>
+            </md-sidenav>
             <md-content flex id="content">
                 <ui-gmap-google-map yelp-vis-overlay
                                     center="map.center"
                                     zoom="map.zoom"
-                                    control="map.control">
+                                    control="map.control"
+                                    options="map.options">
                 </ui-gmap-google-map>
             </md-content>
-            <div class="toolbox" md-whiteframe="2">
-                <div layout="row">
-                    <md-input-container>
-                        <md-select ng-model="selectedDay">
-                            <md-option ng-value="$index" ng-repeat="day in days">{{ day }}</md-option>
-                        </md-select>
-                    </md-input-container>
-                    <md-input-container>
-                        <md-select ng-model="selectedHour">
-                            <md-option ng-value="$index" ng-repeat="hour in hours">{{ hour % 12 + ':00 ' + (hour < 12 ? 'AM' : 'PM') }}</md-option>
-                        </md-select>
-                    </md-input-container>
-                </div>
-            </div>
         </div>
+        <md-toolbar class="time-toolbar md-fab-bottom-right">
+            <div class="md-toolbar-tools" md-whiteframe="3">
+                <label>Select day<label>
+                <md-input-container md-no-float>
+                    <md-select ng-model="selectedDay">
+                        <md-option ng-value="$index" ng-repeat="day in days">{{ day }}</md-option>
+                    </md-select>
+                </md-input-container>
+                <label>Select hour</label>
+                <md-input-container>
+                    <md-select ng-model="selectedHour">
+                        <md-option ng-value="$index" ng-repeat="hour in hours">{{ hour % 12 + ':00 ' + (hour < 12 ? 'AM' : 'PM') }}</md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+        </md-toolbar>
 
         <!-- Include these modules at the end of the body tag to defer loading them until
              the rest of the page loads -->

@@ -1,4 +1,5 @@
 /// <reference path="../typings/index.d.ts" />
+'use strict';
 
 // Returns a bubble map chart function that can be used to generate a reusable
 // bubble map that overlays on top of the Google Map API.
