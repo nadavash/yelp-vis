@@ -18,12 +18,25 @@
         <p>
           Number of businesses: {{ numBusinesses }}
         </p>
+        <md-list>
+          <md-list-item class="md-2-line" ng-repeat="biz in topBusinesses">
+            <div class="md-list-item-text">
+              <h3>{{ biz.name }}</h3>
+              <p>
+                Rating: {{ biz.stars }}
+                Review Count: {{ biz.review_count }}
+              </p>
+            </div>
+            <md-button ng-href="http://www.yelp.com/search?find_desc={{biz.name}}&find_loc=Las+Vegas,+NV"
+                       target="_blank">
+              Check out on yelp
+            </md-button>
+          </md-list-item>
+        </md-list>
       </div>
     </md-dialog-content>
     <md-dialog-actions layout="row">
-      <md-button href="http://en.wikipedia.org/wiki/Mango" target="_blank" md-autofocus>
-        More on Wikipedia
-      </md-button>
+      <md-button ng-click="close()">Dismiss</md-button>
     </md-dialog-actions>
   </form>
 </md-dialog>

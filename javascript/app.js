@@ -31,6 +31,7 @@ app.controller('MainController', function($scope,
         options: {
             streetViewControl: false,
             zoomControl: false
+            // scrollwheel: false
         }
     };
 

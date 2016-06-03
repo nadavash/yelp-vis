@@ -20,6 +20,15 @@ app.controller('BusinessDialogController', function($scope, $mdDialog) {
 
     $scope.numBusinesses = selectedBusinesses.length;
     $scope.avgRating = d3.mean(selectedBusinesses, function(d) {
-        return d.stars;
-    })
+            return d.stars;
+        });
+
+    $scope.topBusinesses = selectedBusinesses.sort(function(a, b) {
+            return b.review_count - a.review_count;
+        }).slice(0, 100)
+        .sort(function(a, b) {
+            return b.stars - a.stars;
+        }).slice(0, 5);
+
+    console.log($scope.topBusinesses);
 });

@@ -24,9 +24,9 @@ md-toolbar h3 {
     border-radius: 3px;
 }
 
-.tutorial-container {
+/*.tutorial-container {
     box-shadow: 2px 3px 3px #666666;
-}
+}*/
 
 /*
   Allow angular.js to be loaded in body, hiding cloaked elements until
