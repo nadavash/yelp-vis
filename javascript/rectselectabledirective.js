@@ -11,7 +11,7 @@ app.directive('rectSelectable', function() {
                 if (selectionRect === null) {
                     return;
                 }
-                selectionRect.setBounds($scope.selectionBounds);
+                selectionRect.setBounds(scope.selectionBounds);
             }, true);
 
             // Setup draggable rectangle.
@@ -19,6 +19,9 @@ app.directive('rectSelectable', function() {
                 var map = instances[0].map;
                 var strokeOpacity = 0.8;
                 var fillOpacity = 0.3;
+                var dragging = false;
+                var rect;
+                var latlng1, latlng2;
 
                 selectionRect = new google.maps.Rectangle({
                     map: map,
@@ -27,24 +30,12 @@ app.directive('rectSelectable', function() {
                     fillColor: '#0000FF',
                     fillOpacity: fillOpacity
                 });
-                var dragging = false;
-                var rect;
-                var pos1, pos2;
-                var latlng1, latlng2;
-
-                setTimeout(function() {
-                    scope.selectionBounds = google.maps.LatLngBounds(
-                        { lat: 36.140092827322654, lng: -115.21121978759766 },
-                        { lat: 36.173079792635654, lng: -115.16212463378906 }
-                    );
-                    console.log('hero')
-                }, 5000);
 
                 google.maps.event.addListener(map, 'mousedown', function(mEvent) {
+                    console.log('here');
                     map.draggable = false;
                     latlng1 = mEvent.latLng;
                     dragging = true;
-                    pos1 = mEvent.pixel;
                     selectionRect.strokeOpacity = strokeOpacity;
                     selectionRect.fillOpacity = fillOpacity;
                 });
@@ -57,18 +48,17 @@ app.directive('rectSelectable', function() {
                 google.maps.event.addListener(map, 'mouseup', function(mEvent) {
                     map.draggable = true;
                     dragging = false;
+                    console.log(mEvent);
+                    if (mEvent.which === 3) {
+                        scope.showAdvanced();
+                    }
                 });
 
                 google.maps.event.addListener(selectionRect, 'mouseup', function(data){
                     map.draggable = true;
                     dragging = false;
+                    scope.showAdvanced();
                 });
-
-                map.addListener('dragstart', function() {
-                    selectionRect.strokeOpacity = 0;
-                    selectionRect.fillOpacity = 0;
-                    selectionRect.setMap(map);
-                })
 
                 function updateBounds() {
                     if (dragging){

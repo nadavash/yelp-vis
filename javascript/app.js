@@ -90,4 +90,14 @@ app.controller('MainController', function($scope,
                 sizes: sizes
             };
         });
+
+    $scope.showAdvanced = function(ev) {
+        $mdDialog.show({
+            controller: 'BusinessDialogController',
+            templateUrl: '/html/business-dialog.tmpl.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose: true,
+            fullscreen: true
+        });
+    };
 });
