@@ -47,9 +47,6 @@ app.directive('rectSelectable', function() {
                 google.maps.event.addListener(map, 'mouseup', function(mEvent) {
                     map.draggable = true;
                     dragging = false;
-                    if (mEvent.which === 3) {
-                        scope.showAdvanced();
-                    }
                 });
 
                 google.maps.event.addListener(selectionRect, 'mouseup', function(data){
