@@ -5,6 +5,7 @@
   },
   "globalDependencies": {
     "angular": "registry:dt/angular#1.5.0+20160517064839",
-    "d3": "registry:dt/d3#0.0.0+20160514171929"
+    "d3": "registry:dt/d3#0.0.0+20160514171929",
+    "google.maps": "registry:dt/google.maps#3.20.0+20160414124451"
   }
 }

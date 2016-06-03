@@ -37,12 +37,12 @@
                     </p>
                 </md-content>
                 <md-input-container class="tutorial-buttons">
-                    <md-button flex>Previous</md-button>
-                    <md-button flex>Next</md-button>
+                    <md-button>Previous</md-button>
+                    <md-button>Next</md-button>
                 </md-input-container>
             </md-sidenav>
             <md-content flex id="content">
-                <ui-gmap-google-map yelp-vis-overlay
+                <ui-gmap-google-map yelp-vis-overlay rect-selectable
                                     center="map.center"
                                     zoom="map.zoom"
                                     control="map.control"
@@ -52,14 +52,16 @@
         </section>
         <md-toolbar class="time-toolbar md-fab-bottom-right" ng-disabled="tutorialActive">
             <div class="md-toolbar-tools" md-whiteframe="3">
-                <label>Select day<label>
-                <md-input-container md-no-float>
+                <md-input-container>
+                    <label>Select day</label>
                     <md-select ng-model="selectedDay">
-                        <md-option ng-value="$index" ng-repeat="day in days">{{ day }}</md-option>
+                        <md-option ng-value="$index" ng-repeat="day in days">
+                            {{ day }}
+                        </md-option>
                     </md-select>
                 </md-input-container>
-                <label>Select hour</label>
                 <md-input-container>
+                    <label>Select hour</label>
                     <md-select ng-model="selectedHour">
                         <md-option ng-value="$index" ng-repeat="hour in hours">
                             {{ ((hour + 11) % 12) + 1 + ':00 ' + (hour < 12 ? 'AM' : 'PM') }}
@@ -84,9 +86,13 @@
         <!-- Include d3 -->
         <script type="text/javascript" src="node_modules/d3/d3.js"></script>
 
-        <!-- Custom modules -->
-        <script type="text/javascript" src="javascript/BubbleMap.js"></script>
+        <!-- Custom d3 modules -->
+        <script type="text/javascript" src="javascript/bubblemap.js"></script>
+
+        <!-- Custom Angular modules -->
         <script type="text/javascript" src="javascript/app.js"></script>
+        <script type="text/javascript" src="javascript/yelpvisoverlaydirective.js"></script>
         <script type="text/javascript" src="javascript/tutorialcontroller.js"></script>
+        <script type="text/javascript" src="javascript/rectselectabledirective.js"></script>
     </body>
 </html>
