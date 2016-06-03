@@ -56,7 +56,9 @@
                 <label>Select hour</label>
                 <md-input-container>
                     <md-select ng-model="selectedHour">
-                        <md-option ng-value="$index" ng-repeat="hour in hours">{{ hour % 12 + ':00 ' + (hour < 12 ? 'AM' : 'PM') }}</md-option>
+                        <md-option ng-value="$index" ng-repeat="hour in hours">
+                            {{ ((hour + 11) % 12) + 1 + ':00 ' + (hour < 12 ? 'AM' : 'PM') }}
+                        </md-option>
                     </md-select>
                 </md-input-container>
             </div>

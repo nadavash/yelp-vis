@@ -23,7 +23,6 @@ app.controller('MainController', function($scope,
                                           uiGmapIsReady) {
     // Share google maps api for directives in this controller.
     $scope.uiGmapIsReady = uiGmapIsReady;
-
     $scope.map = {
         center: { latitude: 36.1699, longitude: -115.1398 },
         zoom: 12,
@@ -40,10 +39,8 @@ app.controller('MainController', function($scope,
         'Saturday'
     ];
     $scope.selectedDay = null;// 6;
-
     $scope.hours = d3.range(24);
     $scope.selectedHour = null;// 11;
-
     $scope.checkinData = null;
 
     // Private variables
