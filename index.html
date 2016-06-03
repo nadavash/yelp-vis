@@ -16,16 +16,17 @@
     <body ng-app="yelpVis" ng-controller="MainController as mc" layout="column"  ng-cloak>
         <md-toolbar class="title-bar" layout="row">
             <div class="md-toolbar-tools">
-                <md-button aria-label="Toggle Tutorial">Start Tutorial</md-button>
+                <md-button ng-click="tutorialActive = !tutorialActive" aria-label="Toggle Tutorial">
+                    {{ tutorialActive ? 'Stop' : 'Start' }} Tutorial
+                </md-button>
                 <h2>Yelp Data Visualization</h2>
             </div>
         </md-toolbar>
         <div flex layout="row">
-            <md-sidenav class="md-sidenav-left"
+            <md-sidenav class="md-sidenav-left tutorial-container"
                         md-component-id="left"
-                        md-is-locked-open="true"
-                        md-disable-backdrop
-                        md-whiteframe="4">
+                        md-is-locked-open="tutorialActive"
+                        md-disable-backdrop>
                 <md-toolbar class="md-theme-indigo">
                     <h1 class="md-toolbar-tools">Tutorial</h1>
                 </md-toolbar>
@@ -35,6 +36,10 @@
                     narrow your display.
                     </p>
                 </md-content>
+                <md-input-container class="tutorial-buttons">
+                    <md-button flex>Previous</md-button>
+                    <md-button flex>Next</md-button>
+                </md-input-container>
             </md-sidenav>
             <md-content flex id="content">
                 <ui-gmap-google-map yelp-vis-overlay
@@ -45,7 +50,7 @@
                 </ui-gmap-google-map>
             </md-content>
         </div>
-        <md-toolbar class="time-toolbar md-fab-bottom-right">
+        <md-toolbar class="time-toolbar md-fab-bottom-right" ng-disabled="tutorialActive">
             <div class="md-toolbar-tools" md-whiteframe="3">
                 <label>Select day<label>
                 <md-input-container md-no-float>
@@ -82,5 +87,6 @@
         <!-- Custom modules -->
         <script type="text/javascript" src="javascript/BubbleMap.js"></script>
         <script type="text/javascript" src="javascript/app.js"></script>
+        <script type="text/javascript" src="javascript/tutorialcontroller.js"></script>
     </body>
 </html>

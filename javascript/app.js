@@ -33,6 +33,9 @@ app.controller('MainController', function($scope,
         }
     };
 
+    // Tutorial
+    $scope.tutorialActive = true;
+
     // Map visualization controls
     $scope.days = [
         'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',

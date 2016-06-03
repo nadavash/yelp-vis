@@ -12,7 +12,7 @@ md-toolbar h3 {
 }
 
 .title-bar {
-    box-shadow: 0px 2px 3px #666666;
+    box-shadow: 0px 2px 3px #aaaaaa;
 }
 
 .time-toolbar {
@@ -24,7 +24,7 @@ md-toolbar h3 {
 }
 
 .tutorial-container {
-    box-shadow: 3px 0px 3px #666666;
+    box-shadow: 2px 3px 3px #aaaaaa;
 }
 
 /*
