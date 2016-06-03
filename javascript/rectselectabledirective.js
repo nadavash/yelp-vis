@@ -32,7 +32,6 @@ app.directive('rectSelectable', function() {
                 });
 
                 google.maps.event.addListener(map, 'mousedown', function(mEvent) {
-                    console.log('here');
                     map.draggable = false;
                     latlng1 = mEvent.latLng;
                     dragging = true;
@@ -48,7 +47,6 @@ app.directive('rectSelectable', function() {
                 google.maps.event.addListener(map, 'mouseup', function(mEvent) {
                     map.draggable = true;
                     dragging = false;
-                    console.log(mEvent);
                     if (mEvent.which === 3) {
                         scope.showAdvanced();
                     }

@@ -49,8 +49,18 @@ app.controller('MainController', function($scope,
 
     $scope.selectionBounds = null;
 
+    $scope.businessData = null;
+
     // Private variables
     var checkinData = null;
+
+    d3.json('/data/businesses.json', function(err, data) {
+        if (err) {
+            throw err;
+        }
+
+        $scope.businessData = data;
+    });
 
     d3.json('/data/checkins.json', function(err, data) {
         if (err) {
@@ -59,6 +69,7 @@ app.controller('MainController', function($scope,
 
         checkinData = data;
     });
+
 
     // Watch for change in date to change the data we expose to the map
     // visualization directive.
@@ -95,7 +106,7 @@ app.controller('MainController', function($scope,
         $mdDialog.show({
             controller: 'BusinessDialogController',
             templateUrl: '/html/business-dialog.tmpl.html',
-            parent: angular.element(document.body),
+            parent: angular.element(document.getElementById('business-dialog-container')),
             clickOutsideToClose: true,
             fullscreen: true
         });
