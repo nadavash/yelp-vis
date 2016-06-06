@@ -30,8 +30,7 @@ app.controller('MainController', function($scope,
         control: {},
         options: {
             streetViewControl: false,
-            zoomControl: false,
-            scrollwheel: false
+            zoomControl: false
         }
     };
 
@@ -80,27 +79,23 @@ app.controller('MainController', function($scope,
                 return;
             }
 
-            var locations = [];
-            var sizes = checkinData[$scope.selectedHour + '-' + $scope.selectedDay]
-                .filter(function(val, i) {
-                    if (val > 0) {
-                        locations.push(checkinData.businesses[i]);
-                        return true;
-                    } else {
-                        return false;
+            var checkins = checkinData[$scope.selectedHour + '-' + $scope.selectedDay]
+                .map(function(val, i) {
+                    if (val <= 0) {
+                        return null;
                     }
-                });
-            sizes = sizes.map(function(value, index) {
-                return {
-                    size: value,
-                    business_id: locations[index].business_id
-                };
-            });
 
-            $scope.checkinData = {
-                locations: locations,
-                sizes: sizes
-            };
+                    return {
+                        size: val,
+                        business_id: checkinData.businesses[i].business_id,
+                        latitude: checkinData.businesses[i].latitude,
+                        longitude: checkinData.businesses[i].longitude
+                    };
+                }).filter(function(val, i) {
+                    return val !== null;
+                });
+
+            $scope.checkinData = checkins;
         });
 
     $scope.showAdvanced = function(ev) {

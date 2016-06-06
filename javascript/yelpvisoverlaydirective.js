@@ -8,6 +8,7 @@ app.directive('yelpVisOverlay', function() {
             var map = null;
             var originalBounds = null;
             var originalZoom = null;
+            var originalProjection = null;
             var overlay = null;
 
             var checkinsMap = new bubbleMap()
@@ -27,14 +28,11 @@ app.directive('yelpVisOverlay', function() {
                 overlay.onAdd = function() {
                     originalBounds = map.getBounds();
                     originalZoom = map.getZoom();
+                    originalProjection = overlay.getProjection();
                 }
 
                 overlay.draw = function() {
                     var projection = overlay.getProjection();
-
-                    if (projection === undefined) {
-                        return;
-                    }
 
                     var sw = projection.fromLatLngToDivPixel(
                         map.getBounds().getSouthWest());
@@ -79,12 +77,9 @@ app.directive('yelpVisOverlay', function() {
                     return;
                 }
 
-                overlay.draw();
-
                 var datum = {
-                    projection: overlay.getProjection(),
-                    locations: checkinData.locations,
-                    sizes: checkinData.sizes,
+                    projection: originalProjection,
+                    sizes: checkinData,
                     maps: google.maps
                 };
 

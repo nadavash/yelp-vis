@@ -55,9 +55,7 @@ function bubbleMap() {
                 .attr('r', function(d) { return bubbleRadiusScale(d.size); })
 
             function transform(d, i) {
-                var geoLocation = new data.maps.LatLng(
-                    data.locations[i].latitude,
-                    data.locations[i].longitude);
+                var geoLocation = new data.maps.LatLng(d.latitude, d.longitude);
                 var screenPos =
                     data.projection.fromLatLngToDivPixel(geoLocation);
 
