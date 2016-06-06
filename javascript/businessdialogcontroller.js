@@ -29,6 +29,4 @@ app.controller('BusinessDialogController', function($scope, $mdDialog) {
         .sort(function(a, b) {
             return b.stars - a.stars;
         }).slice(0, 5);
-
-    console.log($scope.topBusinesses);
 });
