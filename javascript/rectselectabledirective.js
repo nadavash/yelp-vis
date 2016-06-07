@@ -32,7 +32,7 @@ app.directive('rectSelectable', function() {
                 });
 
                 google.maps.event.addListener(map, 'mousedown', function(mEvent) {
-                    map.draggable = false;
+                    scope.map.options.draggable = false;
                     latlng1 = mEvent.latLng;
                     dragging = true;
                     selectionRect.strokeOpacity = strokeOpacity;
@@ -45,12 +45,12 @@ app.directive('rectSelectable', function() {
                 });
 
                 google.maps.event.addListener(map, 'mouseup', function(mEvent) {
-                    map.draggable = true;
+                    scope.map.options.draggable = true;
                     dragging = false;
                 });
 
                 google.maps.event.addListener(selectionRect, 'mouseup', function(data){
-                    map.draggable = true;
+                    scope.map.options.draggable = true;
                     dragging = false;
                     scope.showAdvanced();
                 });

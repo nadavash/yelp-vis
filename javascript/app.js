@@ -30,7 +30,8 @@ app.controller('MainController', function($scope,
         control: {},
         options: {
             streetViewControl: false,
-            zoomControl: false
+            zoomControl: false,
+            draggable: true
         }
     };
 
@@ -106,5 +107,10 @@ app.controller('MainController', function($scope,
             clickOutsideToClose: true,
             fullscreen: true
         });
+    };
+
+    $scope.toggleRectSelection = function() {
+        $scope.map.options.draggable = !$scope.map.options.draggable
+        console.log($scope.map.options.draggable);
     };
 });

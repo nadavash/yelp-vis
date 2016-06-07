@@ -93,6 +93,11 @@
                         </md-option>
                     </md-select>
                 </md-input-container>
+                <md-button class="md-icon-button md-raised" aria-label="Settings"
+                           ng-click="toggleRectSelection()"
+                           ng-disabled="!map.options.draggable">
+                    <md-icon md-font-set="md">picture_in_picture</md-icon>
+                </md-button>
             </div>
         </md-toolbar>
         <div id="business-dialog-container"></div>
