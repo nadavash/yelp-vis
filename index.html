@@ -22,11 +22,11 @@
                 <h1>Yelp Data Visualization</h1>
             </div>
         </md-toolbar>
-        <section flex layout="row">
-            <md-sidenav class="md-sidenav-left tutorial-container"
-                        md-component-id="tutorialSidenav"
-                        md-is-locked-open="tutorialActive"
+        <md-content flex id="content">
+            <md-sidenav class="md-sidenav-left"
                         md-disable-backdrop
+                        md-is-open="tutorialActive"
+                        md-component-id="tutorialSidenav"
                         md-whiteframe="4">
                 <md-toolbar class="md-theme-indigo">
                     <h1 class="md-toolbar-tools">How Happening is Your Neighborhood?</h1>
@@ -66,40 +66,40 @@
                     <md-button>Next</md-button>
                 </md-input-container>-->
             </md-sidenav>
-            <md-content flex id="content">
-                <ui-gmap-google-map yelp-vis-overlay rect-selectable
-                                    center="map.center"
-                                    zoom="map.zoom"
-                                    control="map.control"
-                                    options="map.options">
-                </ui-gmap-google-map>
-            </md-content>
-        </section>
-        <md-toolbar class="time-toolbar md-fab-bottom-right" ng-disabled="tutorialActive">
-            <div class="md-toolbar-tools" md-whiteframe="3">
-                <md-input-container>
-                    <label>Select day</label>
-                    <md-select ng-model="selectedDay">
-                        <md-option ng-value="$index" ng-repeat="day in days">
-                            {{ day }}
-                        </md-option>
-                    </md-select>
-                </md-input-container>
-                <md-input-container>
-                    <label>Select hour</label>
-                    <md-select ng-model="selectedHour">
-                        <md-option ng-value="$index" ng-repeat="hour in hours">
-                            {{ ((hour + 11) % 12) + 1 + ':00 ' + (hour < 12 ? 'AM' : 'PM') }}
-                        </md-option>
-                    </md-select>
-                </md-input-container>
-                <md-button class="md-icon-button md-raised" aria-label="Settings"
-                           ng-click="toggleRectSelection()"
-                           ng-disabled="!map.options.draggable">
-                    <md-icon md-font-set="md">picture_in_picture</md-icon>
-                </md-button>
-            </div>
-        </md-toolbar>
+
+            <ui-gmap-google-map yelp-vis-overlay rect-selectable
+                                center="map.center"
+                                zoom="map.zoom"
+                                control="map.control"
+                                options="map.options">
+            </ui-gmap-google-map>
+
+            <md-toolbar class="time-toolbar md-fab-bottom-right" ng-disabled="tutorialActive">
+                <div class="md-toolbar-tools" md-whiteframe="3">
+                    <md-input-container>
+                        <label>Select day</label>
+                        <md-select ng-model="selectedDay">
+                            <md-option ng-value="$index" ng-repeat="day in days">
+                                {{ day }}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Select hour</label>
+                        <md-select ng-model="selectedHour">
+                            <md-option ng-value="$index" ng-repeat="hour in hours">
+                                {{ ((hour + 11) % 12) + 1 + ':00 ' + (hour < 12 ? 'AM' : 'PM') }}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-button class="md-icon-button md-raised" aria-label="Settings"
+                            ng-click="toggleRectSelection()"
+                            ng-disabled="!map.options.draggable">
+                        <md-icon md-font-set="md">picture_in_picture</md-icon>
+                    </md-button>
+                </div>
+            </md-toolbar>
+        </md-content>
         <div id="business-dialog-container"></div>
 
         <!-- Include these modules at the end of the body tag to defer loading them until
