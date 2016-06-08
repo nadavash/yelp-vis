@@ -1,42 +1,41 @@
 <md-dialog aria-label="Business Information for Selection"  ng-cloak>
-  <form>
-    <md-toolbar>
-      <div class="md-toolbar-tools">
-        <h2>Business Information for Selection</h2>
-        <span flex></span>
-        <md-button class="md-icon-button" ng-click="close()">
-          <md-icon md-font-set="md" aria-label="Close dialog">close</md-icon>
-        </md-button>
-      </div>
-    </md-toolbar>
-    <md-dialog-content>
-      <div class="md-dialog-content">
-        <h2>Basic Statistics for Selection:</h2>
-        <p>
-          Stars: {{ avgRating }}
-        </p>
-        <p>
-          Number of businesses: {{ numBusinesses }}
-        </p>
-        <md-list>
-          <md-list-item class="md-2-line" ng-repeat="biz in topBusinesses">
-            <div class="md-list-item-text">
-              <h3>{{ biz.name }}</h3>
-              <p>
-                Rating: {{ biz.stars }}
-                Review Count: {{ biz.review_count }}
-              </p>
-            </div>
-            <md-button ng-href="http://www.yelp.com/search?find_desc={{biz.name}}&find_loc=Las+Vegas,+NV"
-                       target="_blank">
-              Check out on yelp
-            </md-button>
-          </md-list-item>
-        </md-list>
-      </div>
-    </md-dialog-content>
-    <md-dialog-actions layout="row">
-      <md-button ng-click="close()">Dismiss</md-button>
-    </md-dialog-actions>
-  </form>
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>Business Information for Selection</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="close()">
+        <md-icon md-font-set="md" aria-label="Close dialog">close</md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <md-dialog-content>
+    <div class="md-dialog-content">
+      <h2>Basic Statistics for Selection:</h2>
+      <p>
+        Stars: {{ avgRating }}
+      </p>
+      <p>
+        Number of businesses: {{ numBusinesses }}
+      </p>
+      <time-series chart-data="data"></time-series>
+      <md-list>
+        <md-list-item class="md-2-line" ng-repeat="biz in topBusinesses">
+          <div class="md-list-item-text">
+            <h3>{{ biz.name }}</h3>
+            <p>
+              Rating: {{ biz.stars }}
+              Review Count: {{ biz.review_count }}
+            </p>
+          </div>
+          <md-button ng-href="http://www.yelp.com/search?find_desc={{biz.name}}&find_loc=Las+Vegas,+NV"
+                      target="_blank">
+            Check out on yelp
+          </md-button>
+        </md-list-item>
+      </md-list>
+    </div>
+  </md-dialog-content>
+  <md-dialog-actions layout="row">
+    <md-button ng-click="close()">Dismiss</md-button>
+  </md-dialog-actions>
 </md-dialog>

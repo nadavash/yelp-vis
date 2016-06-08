@@ -69,6 +69,7 @@ app.controller('MainController', function($scope,
         }
 
         checkinData = data;
+        $scope.allCheckinData = data;
     });
 
 
@@ -110,7 +111,6 @@ app.controller('MainController', function($scope,
     };
 
     $scope.toggleRectSelection = function() {
-        $scope.map.options.draggable = !$scope.map.options.draggable
-        console.log($scope.map.options.draggable);
+        $scope.map.options.draggable = !$scope.map.options.draggable;
     };
 });

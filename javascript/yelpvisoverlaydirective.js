@@ -3,6 +3,7 @@
 
 app.directive('yelpVisOverlay', function() {
     return {
+        restrict: 'A',
         scope: false,
         link: function(scope, elem) {
             var map = null;

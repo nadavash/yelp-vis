@@ -12,6 +12,7 @@
 
         <link rel="stylesheet" href="css/main.css">
         <link rel="stylesheet" href="css/map.css">
+        <link rel="stylesheet" href="css/chart.css">
     </head>
     <body ng-app="yelpVis" ng-controller="MainController as mc" layout="column"  ng-cloak>
         <md-toolbar class="title-bar" layout="row">
@@ -105,6 +106,7 @@
         <!-- Include these modules at the end of the body tag to defer loading them until
              the rest of the page loads -->
         <script src="node_modules/lodash/lodash.js"></script>
+        <script src="node_modules/moment/moment.js"></script>
 
         <!-- Include Angular modules -->
         <script src="node_modules/angular/angular.js"></script>
@@ -119,12 +121,14 @@
 
         <!-- Custom d3 modules -->
         <script type="text/javascript" src="javascript/bubblemap.js"></script>
+        <script type="text/javascript" src="javascript/timeseries.js"></script>
 
         <!-- Custom Angular modules -->
         <script type="text/javascript" src="javascript/app.js"></script>
         <script type="text/javascript" src="javascript/yelpvisoverlaydirective.js"></script>
-        <script type="text/javascript" src="javascript/tutorialcontroller.js"></script>
         <script type="text/javascript" src="javascript/rectselectabledirective.js"></script>
+        <script type="text/javascript" src="javascript/timeseriesdirective.js"></script>
+        <script type="text/javascript" src="javascript/tutorialcontroller.js"></script>
         <script type="text/javascript" src="javascript/businessdialogcontroller.js"></script>
     </body>
 </html>

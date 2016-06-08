@@ -1,0 +1,25 @@
+.axis line, .axis path {
+  fill: none;
+  stroke: #000;
+}
+
+/*.title {
+}*/
+
+.axis text {
+  font-size:10px;
+}
+
+.bar {
+  fill:green;
+  opacity:.4;
+}
+
+path {
+    stroke-width: 2;
+    fill: none;
+}
+
+.chart-title {
+    text-anchor: middle;
+}
