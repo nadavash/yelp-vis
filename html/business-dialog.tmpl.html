@@ -10,13 +10,13 @@
   </md-toolbar>
   <md-dialog-content>
     <div class="md-dialog-content">
-      <h2>Basic Statistics for Selection:</h2>
       <p>
-        Stars: {{ avgRating }}
+        Average stars: {{ avgRating }}
       </p>
       <p>
         Number of businesses: {{ numBusinesses }}
       </p>
+      <h2>Weekly Checkin Rates by Day</h2>
       <time-series chart-data="data"></time-series>
       <md-list>
         <md-list-item class="md-2-line" ng-repeat="biz in topBusinesses">

@@ -57,7 +57,7 @@ app.controller('BusinessDialogController', function($scope,
 
         $scope.data = weeklyActivities.map(function(val, index) {
             return {
-                date: moment().weekday(index),
+                date: moment().startOf('day').weekday(index),
                 frequency: val,
             };
         });

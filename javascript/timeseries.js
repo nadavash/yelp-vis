@@ -142,14 +142,16 @@ function timeSeries() {
         var yMax = d3.max(data, function(d) { return d.frequency });
 
         yScale = d3.scale.linear()
-            .domain([yMin, yMax])
+            .domain([yMin * 0.9, yMax])
             .range([innerHeight(), 0]);
     };
 
     var setAxes = function(xAxisLabel, yAxisLabel) {
         var xAxis = d3.svg.axis()
             .scale(xScale)
-            .orient('bottom');
+            .orient('bottom')
+            .tickFormat(d3.time.format('%a'))
+            .ticks(7);
 
         var yAxis = d3.svg.axis()
             .scale(yScale)

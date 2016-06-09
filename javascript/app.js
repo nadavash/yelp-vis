@@ -31,12 +31,14 @@ app.controller('MainController', function($scope,
         options: {
             streetViewControl: false,
             zoomControl: false,
+            scrollwheel: false,
+            disableDoubleClickZoom: true,
             draggable: true
         }
     };
 
     // Tutorial
-    $scope.tutorialActive = false;
+    $scope.tutorialActive = true;
 
     // Map visualization controls
     $scope.days = [

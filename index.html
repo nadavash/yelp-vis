@@ -32,40 +32,14 @@
                 <md-toolbar class="md-theme-indigo">
                     <h1 class="md-toolbar-tools">How Happening is Your Neighborhood?</h1>
                 </md-toolbar>
-                <md-content layout-padding>
-                    <p>
-                        Looking for a new place to live or travel can be a
-                        daunting task. You could easily get lost in a sea of
-                        information without getting a good sense for what a
-                        place is like. To help in solving this problem, we
-                        built this tool to help you understand the breakdown of
-                        activity in cities using business data from Yelp!
-                    </p>
-                    <h2>1. Select a time</h2>
-                    <p>
-                        To begin, select a date and time from the time selector
-                        at the bottom right of the map.
-                    </p>
-                    <h2>2. Explore checkin activity</h2>
-                    <p>
-                        Each red bubble on the screen is a business on Yelp. The
-                        size of the bubble represents the relative number of
-                        checkins at that business at the time selected.
-                    </p>
-                    <h2>3. Select a place</h2>
-                    <p>
-                        Interested in some more details about the Las Vegas
-                        strip? You can right click and drag the mouse on an
-                        area of the map to create a rectangular selection. This
-                        will pop up a dialog with specific information about
-                        the businesses in this area.
-                        <em>Try selecting the Las Vegas strip and see what you get!</em>
-                    </p>
+                <div ng-controller="TutorialController">
+                <md-content layout-padding ng-bind-html="tutorialContent">
                 </md-content>
-                <!--<md-input-container class="tutorial-buttons">
-                    <md-button>Previous</md-button>
-                    <md-button>Next</md-button>
-                </md-input-container>-->
+                <md-input-container class="tutorial-buttons">
+                    <md-button ng-click="previous()" ng-disabled="tutorialStep === 0">Previous</md-button>
+                    <md-button ng-click="next()" ng-disabled="tutorialStep === numSteps - 1">Next</md-button>
+                </md-input-container>
+                </div>
             </md-sidenav>
 
             <ui-gmap-google-map yelp-vis-overlay rect-selectable
